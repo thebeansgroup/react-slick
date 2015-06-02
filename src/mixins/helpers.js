@@ -5,12 +5,19 @@ import ReactTransitionEvents from 'react/lib/ReactTransitionEvents';
 import {getTrackCSS, getTrackLeft, getTrackAnimateCSS} from './trackHelper';
 import assign from 'object-assign';
 
+var _getBoxWidth = function(box) {
+  // Check the browser supports the width/height option.
+  if( box.getBoundingClientRect().width ) return box.getBoundingClientRect().width;
+  // No width/height support, so use offsetWidth instead
+  return box.offsetWidth;
+}
+
 var helpers = {
   initialize: function (props) {
     var slideCount = React.Children.count(props.children);
-    var listWidth = this.refs.list.getDOMNode().getBoundingClientRect().width;
-    var trackWidth = this.refs.track.getDOMNode().getBoundingClientRect().width;
-    var slideWidth = this.getDOMNode().getBoundingClientRect().width/props.slidesToShow;
+    var listWidth  = _getBoxWidth(this.refs.list.getDOMNode());
+    var trackWidth = _getBoxWidth(this.refs.track.getDOMNode());
+    var slideWidth = _getBoxWidth(this.getDOMNode())/props.slidesToShow;
 
     this.setState({
       slideCount: slideCount,
