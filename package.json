@@ -1,8 +1,9 @@
 {
   "name": "react-slick",
-  "version": "0.5.0",
-  "description": " React port of slick carousel",
-  "main": "./lib",
+  "version": "0.5.1",
+  "description": "TBG Clone of React port of slick carousel",
+  "main": "./dist",
+  "private": true,
   "scripts": {
     "start": "./node_modules/.bin/gulp server",
     "prepublish": "./node_modules/.bin/babel ./src --out-dir ./lib && ./node_modules/.bin/gulp dist"
