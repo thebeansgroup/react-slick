@@ -2,6 +2,8 @@
 import {getTrackCSS, getTrackLeft} from './trackHelper';
 import assign from 'object-assign';
 
+import defaultProps from '../default-props';
+
 var EventHandlers = {
   // Event handler for previous and next
   changeSlide: function (options) {
@@ -50,7 +52,6 @@ var EventHandlers = {
         curY: posY
       }
     });
-    e.preventDefault();
   },
   swipeMove: function (e) {
     if (!this.state.dragging) {
@@ -62,6 +63,9 @@ var EventHandlers = {
     var swipeLeft;
     var curLeft, positionOffset;
     var touchObject = this.state.touchObject;
+
+    var swipeDirection = this.swipeDirection(touchObject);
+    if (swipeDirection === 'vertical' && !defaultProps.vertical) return;
 
     curLeft = getTrackLeft(assign({
       slideIndex: this.state.currentSlide,

@@ -1743,9 +1743,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._responsiveMediaHandlers.push({query: query, handler: handler});
 	  },
 	  componentWillUnmount: function () {
-	    this._responsiveMediaHandlers.forEach(function(obj) {
-	      enquire.unregister(obj.query, obj.handler);
-	    });
+	    if (this._responsiveMediaHandlers) {
+	      this._responsiveMediaHandlers.forEach(function(obj) {
+	        enquire.unregister(obj.query, obj.handler);
+	      });
+	    }
 	  }
 	};
 
