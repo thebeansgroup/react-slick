@@ -1,10 +1,19 @@
 'use strict';
 import {getTrackCSS, getTrackLeft} from './trackHelper';
 import assign from 'object-assign';
-
 import defaultProps from '../default-props';
 
+
 var EventHandlers = {
+
+  componentDidMount: function(){
+    var Hammer = require( 'hammerjs' );
+    var hammertime = new Hammer(this.getDOMNode());
+    hammertime.on("panleft panright", function(ev) {
+      ev.preventDefault();
+    });
+  },
+
   // Event handler for previous and next
   changeSlide: function (options) {
     var indexOffset, slideOffset, unevenOffset;
@@ -82,36 +91,60 @@ var EventHandlers = {
       swipeLeft: swipeLeft,
       trackStyle: getTrackCSS(assign({left: swipeLeft}, this.props, this.state))
     });
-    e.preventDefault();
+
   },
-  swipeEnd: function (e) {
-    e.preventDefault();
-    if (!this.state.dragging) {
-      return;
+
+  //
+  // SWIPE END METHODS
+  //
+
+  handleSwipe: function (swipeDirection) {
+    if (swipeDirection === 'left') {
+      this.slideHandler(this.state.currentSlide + this.props.slidesToScroll);
+    } else if (swipeDirection === 'right') {
+      this.slideHandler(this.state.currentSlide - this.props.slidesToScroll);
+    } else {
+      this.slideHandler(this.state.currentSlide, null, true);
     }
-    var touchObject = this.state.touchObject;
-    var minSwipe = this.state.listWidth/this.props.touchThreshold;
-    var swipeDirection = this.swipeDirection(touchObject);
+  },
+
+  killSwipe: function () {
     this.setState({
       dragging: false,
       swipeLeft: null,
       touchObject: {}
     });
+  },
+
+  //
+  // SWIPE END
+  //
+
+  swipeEnd: function (e) {
+    var touchObject = this.state.touchObject;
+    var minSwipe = this.state.listWidth/this.props.touchThreshold;
+    var swipeDirection = this.swipeDirection(touchObject);
+
+    // Stop all events
+    // e.preventDefault();
+
+    // IF NOT dragging then return false
+    if (!this.state.dragging) { return; }
+
+    // Neutralise React swipe event
+    this.killSwipe();
+
     // Fix for #13
-    if (!touchObject.swipeLength) {
-      return;
-    }
+    // "I'm trying it with demo page and I can drag but if I click on one of images suddenly dragging is disabled, dots don't respond."
+    if (!touchObject.swipeLength) { return; }
+
+    // If the swipe is worth handling then work out what to do with it
     if (touchObject.swipeLength > minSwipe) {
-      if (swipeDirection === 'left') {
-        this.slideHandler(this.state.currentSlide + this.props.slidesToScroll);
-      } else if (swipeDirection === 'right') {
-        this.slideHandler(this.state.currentSlide - this.props.slidesToScroll);
-      } else {
-        this.slideHandler(this.state.currentSlide, null, true);
-      }
-    } else {
-      this.slideHandler(this.state.currentSlide, null, true);
+      return this.handleSwipe(swipeDirection);
     }
+    
+    // If NOT then handle it… I don' know
+    this.slideHandler(this.state.currentSlide, null, true);
   }
 };
 
