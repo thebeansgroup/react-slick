@@ -1,10 +1,19 @@
 'use strict';
 import {getTrackCSS, getTrackLeft} from './trackHelper';
 import assign from 'object-assign';
-
 import defaultProps from '../default-props';
 
+
 var EventHandlers = {
+
+  componentDidMount: function(){
+    var Hammer = require( 'hammerjs' );
+    var hammertime = new Hammer(this.getDOMNode());
+    hammertime.on("panleft panright", function(ev) {
+      ev.preventDefault();
+    });
+  },
+
   // Event handler for previous and next
   changeSlide: function (options) {
     var indexOffset, slideOffset, unevenOffset;
@@ -82,7 +91,7 @@ var EventHandlers = {
       swipeLeft: swipeLeft,
       trackStyle: getTrackCSS(assign({left: swipeLeft}, this.props, this.state))
     });
-    e.preventDefault();
+
   },
 
   //
@@ -117,7 +126,7 @@ var EventHandlers = {
     var swipeDirection = this.swipeDirection(touchObject);
 
     // Stop all events
-    e.preventDefault();
+    // e.preventDefault();
 
     // IF NOT dragging then return false
     if (!this.state.dragging) { return; }

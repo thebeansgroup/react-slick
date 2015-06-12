@@ -13,6 +13,7 @@ var _getBoxWidth = function(box) {
 }
 
 var helpers = {
+
   initialize: function (props) {
     var slideCount = React.Children.count(props.children);
     var listWidth  = _getBoxWidth(this.refs.list.getDOMNode());
